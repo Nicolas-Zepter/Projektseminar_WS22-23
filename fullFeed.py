@@ -36,7 +36,7 @@ def scrape_site(link, lehrstuhl_name, index):
     soup = BeautifulSoup(page.content, 'html.parser')
     entries = []
 
-    if index == 0 or index == 1 or index == 2:  # similar structure
+    if index == 0 or index == 1 or index == 2:
         headers = soup.select("h2")
         paras = soup.select("p")
         for h in headers:
@@ -53,8 +53,6 @@ def scrape_site(link, lehrstuhl_name, index):
         for p in paras:
             if p.has_attr("itemprop") and len(p.text) > 50:
                 entries[-1]["Description"] = p.text.strip()
-
-    # Add custom scraping logic for other indices here (index == 3, 4, ...)
 
     return pd.DataFrame(entries)
 
@@ -73,7 +71,8 @@ def scrape_all_sites(links, lehrstuhl_names):
 
 
 def run_update():
-    # Input data
+    
+    # Input
     lehrstuhl_csv = "lehrstuhl.csv"
     links = [
         "https://www.is.rw.fau.de/neuigkeiten", "https://www.kommunikationswissenschaft.rw.fau.de",
@@ -89,7 +88,7 @@ def run_update():
         "Empirische Mikroökonomie", "Finanzwissenschaft", "Gesundheitsökonomie"
     ]
 
-    # Parse data
+    # Parse
     df_rss = parse_rss_feeds(lehrstuhl_csv)
     df_scraped = scrape_all_sites(links, lehrstuhl_names)
 
@@ -97,7 +96,7 @@ def run_update():
     df_all = pd.concat([df_rss, df_scraped], ignore_index=True)
     df_all = df_all[['Date', 'Title', 'Lehrstuhl', 'Description', 'Link']]
     df_all.to_csv("allnews.csv", index=False, encoding='utf-8-sig')
-    print("✅ Update complete – allnews.csv created.")
+    print("Update complete – allnews.csv created.")
 
 
 if __name__ == "__main__":
