@@ -1,4 +1,4 @@
-from full_feed.rss_scraper import parse_rss_feeds
+ï»¿from full_feed.rss_scraper import parse_rss_feeds
 from full_feed.web_scraper import scrape_all_sites
 from full_feed.data_utils import merge_and_save
 
@@ -17,9 +17,9 @@ def run_update():
 
     lehrstuhl_names = [
         "Digital Industrial Service Systems", "Kommunikationswissenschaft",
-        "Digital Transformation Lab", "Rechnungswesen und Prüfungswesen",
+        "Digital Transformation Lab", "Rechnungswesen und PrÃ¼fungswesen",
         "Versicherungswirtschaft", "Empirische Wirtschaftsforschung",
-        "Empirische Mikroökonomie", "Finanzwissenschaft", "Gesundheitsökonomie"
+        "Empirische MikroÃ¶konomie", "Finanzwissenschaft", "GesundheitsÃ¶konomie"
     ]
 
     df_rss = parse_rss_feeds("lehrstuhl.csv")
