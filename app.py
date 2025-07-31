@@ -9,6 +9,7 @@ CSV_PATH = os.path.join(os.path.dirname(__file__), 'allnews.csv')
 def load_data():
     df = pd.read_csv(CSV_PATH)
     df = df.dropna(subset=["Date", "Title", "Lehrstuhl", "Link"])  # Remove rows missing key info
+    df["Description"] = df["Description"].fillna("")  # Replace NaN with empty string
     return df
 
 def get_lehrstuhl_options(df):
