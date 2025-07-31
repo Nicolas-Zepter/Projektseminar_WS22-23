@@ -1,281 +1,93 @@
 <!DOCTYPE html>
-
 <html>
-
-<meta name ="viewport" content="width=device-width", initial-scale="1.0">
-
-<title>WiSo Search Engine</title>
-
 <head>
-    
-    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
-    <py-config>
-        packages = ["pandas"]
-        [[fetch]]
-        files = ['allnews.csv']
-    </py-config>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiSo Search Engine</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
     <style>
-
-        * {
-            margin:0;
-        }
-
-        #wrapper {
-            display: grid;
-            grid-template-areas: 
-                'header'
-                'body'
-                'footer';    
-        }
-
-        #header {
-            grid-area: header;
-        }
-
-        /* header stellt den oberen Banner dar*/
-        header {
-            overflow: hidden;
-            background-color: rgba(197.0000034570694, 15.000000055879354, 60.00000022351742, 1);
-            width: auto;
-            height: auto;
-            position:relative;
-        }
-
-        /* header_background_img wird zur Positionierung des Infothek-Bilds verwendet (enthält auch die Bildquelle)*/
-        .header_background_img {
-            background-image: url(https://www.infothek.rw.fau.de/files/2021/03/cropped-09a1734-1.jpg);
-            background-repeat: no-repeat;
-            background-size: cover;
-            height:5.5em;
-            width:65%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* welcome_message ist der Text in dem header*/
-        .welcome_message {
-            background-color: rgba(197.0000034570694, 15.000000055879354, 60.00000022351742, 1);
-            width: auto;
-            height: auto;
-            padding:0.1%;
-            position: absolute;
-            top: 40%;
-            left:15.5%;
-            transform: translate(0, -50%);
-            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5);
-        }
-        
-        #body {
-            grid-area:body;
-        }
-
-        .page_container {
-            overflow: hidden;
-            background-color: rgba(4.000000236555934, 49.00000087916851, 106.00000128149986, 1);
-            width: auto;
-        }
-
-        /* search_elements referenziert den Filterbutton, die Search Bar und den Search Button zusammen (Verwendung: Positionieren)*/
-        .search_elements {
-            margin-top: 0.75%;
-            margin-bottom: 0.75%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .form-control {
-            height: 2em;
-            text-align: center;
-        }
-
-        /* form, input und placeholder referenzieren alle jeweils Elemente der Search Bar (bzw. teilweise auch die buttons mit form)*/
-        form {
-            width: 75%;
-            height: 2em;
-            border-radius: 5px;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        input {
-            width: 100%;
-            height: 100%;
-            padding: 6px 10px;
-        }
-        
-         ::placeholder {
-            color: rgba(0, 0, 0, 0.5);
-        }
-
-        /* content_window ist der komplette blaue Kasten mit den abgerundeten Ecken */
-        .content_window {
-            overflow-y: scroll;
-            background-color: rgb(255, 255, 255);
-            width: 98%;
-            height: 42em;
-            margin-bottom:2%;
-            margin-left:auto;
-            margin-right: auto;
-            
-        }
-        
-        /*#footer {
-            grid-area:footer;
-        }*/
-
-        /*footer stellt den unteren Banner dar*/
-        footer {
-            background-color: rgba(197.0000034570694, 15.000000055879354, 60.00000022351742, 1);
-            width: auto;
-            height: auto;
-            overflow:hidden;
-            position:relative;
-        }
-
-        #logo { 
-            margin-left:0.1%;
-            margin-top:0.01%;
-            width: 16%; 
-            height: 3.9em;
-        }
-
+        * { margin:0; }
+        #wrapper { display: grid; grid-template-areas: 'header' 'body' 'footer'; }
+        #header { grid-area: header; }
+        header { overflow: hidden; background-color: rgba(197, 15, 60, 1); width: auto; height: auto; position:relative; }
+        .header_background_img { background-image: url(https://www.infothek.rw.fau.de/files/2021/03/cropped-09a1734-1.jpg); background-repeat: no-repeat; background-size: cover; height:5.5em; width:65%; margin-left: auto; margin-right: auto; }
+        .welcome_message { background-color: rgba(197, 15, 60, 1); width: auto; height: auto; padding:0.1%; position: absolute; top: 40%; left:15.5%; transform: translate(0, -50%); box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5); }
+        #body { grid-area:body; }
+        .page_container { overflow: hidden; background-color: rgba(4, 49, 106, 1); width: auto; }
+        .search_elements { margin-top: 0.75%; margin-bottom: 0.75%; margin-left: auto; margin-right: auto; }
+        .form-control { height: 2em; text-align: center; }
+        form { width: 75%; height: 2em; border-radius: 5px; display: flex; flex-direction: row; align-items: center; margin-left: auto; margin-right: auto; }
+        input { width: 100%; height: 100%; padding: 6px 10px; }
+        ::placeholder { color: rgba(0, 0, 0, 0.5); }
+        .content_window { overflow-y: scroll; background-color: rgb(255, 255, 255); width: 98%; height: 42em; margin-bottom:2%; margin-left:auto; margin-right: auto; }
+        footer { background-color: rgba(197, 15, 60, 1); width: auto; height: auto; overflow:hidden; position:relative; }
+        #logo { margin-left:0.1%; margin-top:0.01%; width: 16%; height: 3.9em; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #f2f2f2; cursor: pointer; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:hover { background-color: #f1f1f1; }
     </style>
-
 </head>
-
+<body>
 <div id="wrapper">
-
-<header id="header">
+    <header id="header">
         <div class="header_background_img"> </div>
-        <div class=welcome_message style="color:rgba(255, 255, 255, 1); font-family:Roboto; text-align:center; font-size:25px; letter-spacing:0;">Willkommen zur Search Engine der WiSo Infothek!</div>   
-</header>
-
-<body id="body">  
-    
-    <P>
-        <py-script>
-            from js import document
-            import pandas as pd
-            from datetime import timedelta, datetime
-            from pyodide.http import open_url      
-            pd.set_option('display.max_rows', None)
-            pd.set_option('display.max_colwidth', None)
-            with open('allnews.csv', 'r') as fp:
-                main=pd.read_csv(fp)
-              
-            main['Date'] = pd.to_datetime(main['Date'], format='%Y-%m-%d')   
-            main = main.set_index('Date')       
-            main=main.dropna()
-            feedSize = 10000
-
-            def newest():
-                return main.sort_values(by=['Date'], ascending=False)
-                
-            def oldest(): 
-                return main.sort_values(by=['Date'])
-            
-            def byDay(): 
-                x= main[main.index>=(datetime.now()-timedelta(days=1))]
-                return x.sort_values(by=['Date'], ascending=False)   
-
-            def byDay3(): 
-                x= main[main.index>=(datetime.now()-timedelta(days=3))]
-                return x.sort_values(by=['Date'], ascending=False)
-
-            def byWeek(): 
-                x= main[main.index>=(datetime.now()-timedelta(days=7))]
-                return x.sort_values(by=['Date'], ascending=False)
-
-            def searchDes(x,y):
-                return y.loc[y['Description'].str.contains(x, case=False)]
-               
-            def byWebsite(x,y):
-                return y.loc[y['Lehrstuhl'].str.contains(x, case=False)]
-                          
-            def p(x,y):
-                print(x.head(y))      
-
-            c = Element('console')
-
-            def search():
-                c.clear()
-                temp = main
-                choice1 = document.getElementById("filter1").value
-                choice2 = document.getElementById("filter2").value
-                searchbar = document.getElementById("searchbar").value
-                if choice1 == "sNew":
-                    temp = newest()
-                elif choice1 == "sOld":
-                    temp = oldest()
-                elif choice1 == "sDay":
-                    temp = byDay()
-                elif choice1 == "s3day":
-                    temp = byDay3()
-                elif choice1 == "sWeek":
-                    temp = byWeek()
-                if searchbar != "":
-                    if choice2 == "sChair":
-                        temp = byWebsite(searchbar,temp)
-                    if choice2 == "sSearch":
-                        temp = searchDes(searchbar,temp)
-                c.write(temp.head(feedSize))  
-        </py-script>    
-
-    </P> 
-
-    <div class=page_container>
-
-        <!--FAU Font für den Bannertext-->
-        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
-
-            <div class="search_elements"> 
-
-                <form id="form">
-
-                    <p id="test">
-                        <select class="form-control" id="filter1">
-                            <option value="sNew">Neueste</option>
-                            <option value="sOld">Älteste</option>
-                            <option value="sDay">Letzter Tag</option>
-                            <option value="s3day">Letzte 3 Tage</option>
-                            <option value="sWeek"> Letzte Woche</option>      
-                        </select>    
-                    </p>
-
-                    <p>
-                        <select class="form-control" id="filter2">
-                            <option value="sChair">Lehrstuhl</option>
-                            <option value="sSearch">Suche</option>    
-                        </select>   
-                    </p>
-
-                    <!--Eingabefeld für die Suche-->
-                    <input type="search" id="searchbar" name="q" placeholder="Suchanfrage eingeben...">
-                    <!--Button zum Suchen-->
-                    <button style="height: 2em; width: 115px" id="searchBtn" type="button" py-onclick="search()"> Suchen </button>
-
+        <div class="welcome_message" style="color:rgba(255, 255, 255, 1); font-family:Roboto; text-align:center; font-size:25px; letter-spacing:0;">Willkommen zur Search Engine der WiSo Infothek!</div>
+    </header>
+    <body id="body">
+        <div class="page_container">
+            <div class="search_elements">
+                <form method="get" action="/">
+                    <select class="form-control" name="lehrstuhl">
+                        <option value="">Alle LehrstÃ¼hle</option>
+                        {% for lehrstuhl in lehrstuhl_options %}
+                            <option value="{{ lehrstuhl }}" {% if lehrstuhl == lehrstuhl_filter %}selected{% endif %}>{{ lehrstuhl }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="search" name="search" placeholder="Suchanfrage eingeben..." value="{{ search_query }}">
+                    <select class="form-control" name="sort_by">
+                        <option value="Date" {% if sort_by == 'Date' %}selected{% endif %}>Datum</option>
+                        <option value="Title" {% if sort_by == 'Title' %}selected{% endif %}>Titel</option>
+                        <option value="Lehrstuhl" {% if sort_by == 'Lehrstuhl' %}selected{% endif %}>Lehrstuhl</option>
+                    </select>
+                    <select class="form-control" name="sort_dir">
+                        <option value="desc" {% if sort_dir == 'desc' %}selected{% endif %}>Absteigend</option>
+                        <option value="asc" {% if sort_dir == 'asc' %}selected{% endif %}>Aufsteigend</option>
+                    </select>
+                    <button style="height: 2em; width: 115px" type="submit">Suchen</button>
                 </form>
-
             </div>
-
-            <div class=content_window>
-                <p id="console"></p>
+            <div class="content_window">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Datum</th>
+                            <th>Titel</th>
+                            <th>Lehrstuhl</th>
+                            <th>Beschreibung</th>
+                            <th>Link</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in records %}
+                        <tr>
+                            <td>{{ row['Date'] }}</td>
+                            <td>{{ row['Title'] }}</td>
+                            <td>{{ row['Lehrstuhl'] }}</td>
+                            <td>{{ row['Description'] }}</td>
+                            <td><a href="{{ row['Link'] }}" target="_blank">Link</a></td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" style="text-align:center;">Keine EintrÃ¤ge gefunden.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-
-    </div>
-
-</body>
-
-
-<footer id ="footer">
-    <img id="logo" src="https://upload.wikimedia.org/wikipedia/commons/7/70/Friedrich-Alexander-Universität_Erlangen-Nürnberg_logo.svg" alt="FAU Web Logo">
-</footer>
-
+        </div>
+        <footer id ="footer">
+            <img id="logo" src="https://upload.wikimedia.org/wikipedia/commons/7/70/Friedrich-Alexander-Universit%C3%A4t_Erlangen-N%C3%BCrnberg_logo.svg" alt="FAU Web Logo">
+        </footer>
+    </body>
 </div>
-
+</body>
 </html>
