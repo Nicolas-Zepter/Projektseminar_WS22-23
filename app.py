@@ -1,30 +1,59 @@
-﻿from full_feed.rss_scraper import parse_rss_feeds
-from full_feed.web_scraper import scrape_all_sites
-from full_feed.data_utils import merge_and_save
+﻿from flask import Flask, render_template, request
+import pandas as pd
+import os
 
-def run_update():
-    links = [
-        "https://www.is.rw.fau.de/neuigkeiten",
-        "https://www.kommunikationswissenschaft.rw.fau.de",
-        "https://www.digitaltransformation.rw.fau.eu",
-        "https://www.pw.rw.fau.de",
-        "https://www.vwrm.rw.fau.de/aktuelles",
-        "https://www.empiricalecon.rw.fau.de",
-        "https://www.emmi.rw.fau.de/aktuelles",
-        "https://www.finanzwissenschaft.rw.fau.de",
-        "http://www.gesoek.wiso.fau.de"
-    ]
+app = Flask(__name__)
 
-    lehrstuhl_names = [
-        "Digital Industrial Service Systems", "Kommunikationswissenschaft",
-        "Digital Transformation Lab", "Rechnungswesen und Prüfungswesen",
-        "Versicherungswirtschaft", "Empirische Wirtschaftsforschung",
-        "Empirische Mikroökonomie", "Finanzwissenschaft", "Gesundheitsökonomie"
-    ]
+CSV_PATH = os.path.join(os.path.dirname(__file__), 'allnews.csv')
 
-    df_rss = parse_rss_feeds("lehrstuhl.csv")
-    df_scraped = scrape_all_sites(links, lehrstuhl_names)
-    merge_and_save(df_rss, df_scraped)
+def load_data():
+    df = pd.read_csv(CSV_PATH)
+    df = df.dropna(subset=["Date", "Title", "Lehrstuhl", "Link"])  # Remove rows missing key info
+    return df
 
-if __name__ == "__main__":
-    run_update()
+def get_lehrstuhl_options(df):
+    return sorted(df["Lehrstuhl"].dropna().unique())
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    df = load_data()
+    search_query = request.values.get('search', '').strip()
+    lehrstuhl_filter = request.values.get('lehrstuhl', '')
+    sort_by = request.values.get('sort_by', 'Date')
+    sort_dir = request.values.get('sort_dir', 'desc')
+
+    # Filter by Lehrstuhl
+    if lehrstuhl_filter:
+        df = df[df['Lehrstuhl'] == lehrstuhl_filter]
+
+    # Search in Title and Description
+    if search_query:
+        mask = df['Title'].str.contains(search_query, case=False, na=False) |\
+               df['Description'].str.contains(search_query, case=False, na=False)
+        df = df[mask]
+
+    # Sort
+    ascending = (sort_dir == 'asc')
+    if sort_by in df.columns:
+        df = df.sort_values(by=sort_by, ascending=ascending)
+    else:
+        df = df.sort_values(by='Date', ascending=False)
+
+    # Prepare Lehrstuhl dropdown
+    lehrstuhl_options = get_lehrstuhl_options(load_data())
+
+    # Convert to records for template
+    records = df.to_dict(orient='records')
+
+    return render_template(
+        'index.html',
+        records=records,
+        lehrstuhl_options=lehrstuhl_options,
+        search_query=search_query,
+        lehrstuhl_filter=lehrstuhl_filter,
+        sort_by=sort_by,
+        sort_dir=sort_dir
+    )
+
+if __name__ == '__main__':
+    app.run(debug=True)
