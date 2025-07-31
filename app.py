@@ -60,5 +60,6 @@ def index():
     )
 
 if __name__ == '__main__':
-    threading.Thread(target=lambda: (time.sleep(1), webbrowser.open_new_tab('http://127.0.0.1:5000'))).start()
+    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        threading.Thread(target=lambda: (time.sleep(1), webbrowser.open_new_tab('http://127.0.0.1:5000'))).start()
     app.run(debug=True)
