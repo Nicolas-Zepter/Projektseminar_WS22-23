@@ -5,20 +5,105 @@
     <title>WiSo Search Engine</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
     <style>
-        * { margin:0; }
-        #wrapper { display: grid; grid-template-areas: 'header' 'body' 'footer'; }
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body, #wrapper {
+            background-color: rgba(4, 49, 106, 1);
+        }
+        #wrapper {
+            min-height: 100vh;
+            min-width: 100vw;
+            height: 100vh;
+            width: 100vw;
+            display: grid;
+            grid-template-rows: auto auto 1fr auto;
+            grid-template-areas:
+                'header'
+                'search'
+                'table'
+                'footer';
+        }
         #header { grid-area: header; }
         header { overflow: hidden; background-color: rgba(197, 15, 60, 1); width: auto; height: auto; position:relative; }
         .header_background_img { background-image: url(https://www.infothek.rw.fau.de/files/2021/03/cropped-09a1734-1.jpg); background-repeat: no-repeat; background-size: cover; height:5.5em; width:65%; margin-left: auto; margin-right: auto; }
         .welcome_message { background-color: rgba(197, 15, 60, 1); width: auto; height: auto; padding:0.1%; position: absolute; top: 40%; left:15.5%; transform: translate(0, -50%); box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5); }
-        #body { grid-area:body; }
-        .page_container { overflow: hidden; background-color: rgba(4, 49, 106, 1); width: auto; }
-        .search_elements { margin-top: 0.75%; margin-bottom: 0.75%; margin-left: auto; margin-right: auto; }
-        .form-control { height: 2em; text-align: center; }
+        .search_elements {
+            grid-area: search;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 0.75%;
+            margin-bottom: 2em; /* Add space below search bar */
+        }
+        .search-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1em;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+            background: #fff;
+            padding: 1em 1.5em;
+            border-radius: 1em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            margin: 0 auto;
+        }
+        .form-control {
+            height: 2.5em;
+            min-width: 150px;
+            border: 1px solid #ccc;
+            border-radius: 0.5em;
+            padding: 0 0.75em;
+            font-size: 1em;
+            background: #f9f9f9;
+            transition: border 0.2s;
+        }
+        .form-control:focus {
+            border: 1.5px solid #1976d2;
+            outline: none;
+            background: #fff;
+        }
+        .search-input {
+            flex: 1 1 180px;
+            min-width: 275px;
+            max-width: 4500px;
+        }
+        .search-btn {
+            height: 2.5em;
+            padding: 0 1.5em;
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 0.5em;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 1px 4px rgba(25, 118, 210, 0.08);
+        }
+        .search-btn:hover {
+            background: #125ea7;
+        }
         form { width: 75%; height: 2em; border-radius: 5px; display: flex; flex-direction: row; align-items: center; margin-left: auto; margin-right: auto; }
         input { width: 100%; height: 100%; padding: 6px 10px; }
         ::placeholder { color: rgba(0, 0, 0, 0.5); }
-        .content_window { overflow-y: scroll; background-color: rgb(255, 255, 255); width: 98%; height: 42em; margin-bottom:2%; margin-left:auto; margin-right: auto; }
+        .content_window {
+            flex: 1 1 auto;
+            background-color: #fff;
+            width: 98%;
+            margin: 0 auto 2% auto;
+            border-radius: 0.75em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            overflow-y: auto;
+            max-height: calc(100vh - 18em); /* Adjust based on header/search/footer height */
+            min-height: 200px;
+        }
         footer { background-color: rgba(197, 15, 60, 1); width: auto; height: auto; overflow:hidden; position:relative; }
         #logo { margin-left:0.1%; margin-top:0.01%; width: 16%; height: 3.9em; }
         table { width: 100%; border-collapse: collapse; }
@@ -34,60 +119,58 @@
         <div class="header_background_img"> </div>
         <div class="welcome_message" style="color:rgba(255, 255, 255, 1); font-family:Roboto; text-align:center; font-size:25px; letter-spacing:0;">Willkommen zur Search Engine der WiSo Infothek!</div>
     </header>
-    <body id="body">
-        <div class="page_container">
-            <div class="search_elements">
-                <form method="get" action="/">
-                    <select class="form-control" name="lehrstuhl">
-                        <option value="">Alle Lehrstühle</option>
-                        {% for lehrstuhl in lehrstuhl_options %}
-                            <option value="{{ lehrstuhl }}" {% if lehrstuhl == lehrstuhl_filter %}selected{% endif %}>{{ lehrstuhl }}</option>
-                        {% endfor %}
-                    </select>
-                    <input type="search" name="search" placeholder="Suchanfrage eingeben..." value="{{ search_query }}">
-                    <select class="form-control" name="sort_by">
-                        <option value="Date" {% if sort_by == 'Date' %}selected{% endif %}>Datum</option>
-                        <option value="Title" {% if sort_by == 'Title' %}selected{% endif %}>Titel</option>
-                        <option value="Lehrstuhl" {% if sort_by == 'Lehrstuhl' %}selected{% endif %}>Lehrstuhl</option>
-                    </select>
-                    <select class="form-control" name="sort_dir">
-                        <option value="desc" {% if sort_dir == 'desc' %}selected{% endif %}>Absteigend</option>
-                        <option value="asc" {% if sort_dir == 'asc' %}selected{% endif %}>Aufsteigend</option>
-                    </select>
-                    <button style="height: 2em; width: 115px" type="submit">Suchen</button>
-                </form>
-            </div>
-            <div class="content_window">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Datum</th>
-                            <th>Titel</th>
-                            <th>Lehrstuhl</th>
-                            <th>Beschreibung</th>
-                            <th>Link</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for row in records %}
-                        <tr>
-                            <td>{{ row['Date'] }}</td>
-                            <td>{{ row['Title'] }}</td>
-                            <td>{{ row['Lehrstuhl'] }}</td>
-                            <td>{{ row['Description'] }}</td>
-                            <td><a href="{{ row['Link'] }}" target="_blank">Link</a></td>
-                        </tr>
-                        {% else %}
-                        <tr><td colspan="5" style="text-align:center;">Keine Einträge gefunden.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+    <div class="search_elements">
+        <form method="get" action="/" class="search-form">
+            <select class="form-control" name="lehrstuhl">
+                <option value="">Alle Lehrstühle</option>
+                {% for lehrstuhl in lehrstuhl_options %}
+                    <option value="{{ lehrstuhl }}" {% if lehrstuhl == lehrstuhl_filter %}selected{% endif %}>{{ lehrstuhl }}</option>
+                {% endfor %}
+            </select>
+            <input type="search" name="search" class="form-control search-input" placeholder="Suche nach Titel oder Beschreibung..." value="{{ search_query }}">
+            <select class="form-control" name="sort_by">
+                <option value="Date" {% if sort_by == 'Date' %}selected{% endif %}>Datum</option>
+                <option value="Title" {% if sort_by == 'Title' %}selected{% endif %}>Titel</option>
+                <option value="Lehrstuhl" {% if sort_by == 'Lehrstuhl' %}selected{% endif %}>Lehrstuhl</option>
+            </select>
+            <select class="form-control" name="sort_dir">
+                <option value="desc" {% if sort_dir == 'desc' %}selected{% endif %}>Absteigend</option>
+                <option value="asc" {% if sort_dir == 'asc' %}selected{% endif %}>Aufsteigend</option>
+            </select>
+            <button class="search-btn" type="submit">Suchen</button>
+        </form>
+    </div>
+    <div class="page_container">
+        <div class="content_window">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Titel</th>
+                        <th>Lehrstuhl</th>
+                        <th>Beschreibung</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in records %}
+                    <tr>
+                        <td>{{ row['Date'] }}</td>
+                        <td>{{ row['Title'] }}</td>
+                        <td>{{ row['Lehrstuhl'] }}</td>
+                        <td>{{ row['Description'] if row['Description'] else 'Keine Beschreibung verfügbar' }}</td>
+                        <td><a href="{{ row['Link'] }}" target="_blank">Link</a></td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5" style="text-align:center;">Keine Einträge gefunden.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <footer id ="footer">
-            <img id="logo" src="https://upload.wikimedia.org/wikipedia/commons/7/70/Friedrich-Alexander-Universit%C3%A4t_Erlangen-N%C3%BCrnberg_logo.svg" alt="FAU Web Logo">
-        </footer>
-    </body>
+    </div>
+    <footer id ="footer">
+        <img id="logo" src="https://upload.wikimedia.org/wikipedia/commons/7/70/Friedrich-Alexander-Universit%C3%A4t_Erlangen-N%C3%BCrnberg_logo.svg" alt="FAU Web Logo">
+    </footer>
 </div>
 </body>
 </html>
