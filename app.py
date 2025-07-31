@@ -1,6 +1,9 @@
 ﻿from flask import Flask, render_template, request
 import pandas as pd
 import os
+import threading
+import webbrowser
+import time
 
 app = Flask(__name__)
 
@@ -57,4 +60,5 @@ def index():
     )
 
 if __name__ == '__main__':
+    threading.Thread(target=lambda: (time.sleep(1), webbrowser.open_new_tab('http://127.0.0.1:5000'))).start()
     app.run(debug=True)
